@@ -30,14 +30,9 @@ cd dailysync-gramin-docker
 docker compose up -d
 ```
 
-### 3. 访问面板
+等待构建完成（首次约 3-5 分钟），然后浏览器打开 **http://服务器IP:9610**，注册登录即可使用。
 
-打开浏览器访问 **http://服务器IP:9610**
-
-- 登录后直接在"佳明账号配置"中填写国区和国际区的 Garmin 账号密码
-- 点击"开始同步"手动同步，或等待定时任务（每天 08:00 和 16:00 自动同步）
-
-### 4. 查看日志
+### 3. 查看日志
 
 ```bash
 docker compose logs -f dailysync
@@ -90,6 +85,59 @@ dailysync-docker/
 │   ├── constant.ts
 │   └── utils/
 └── assets/                   # 文档用图片资源
+```
+
+```yaml
+services:
+  mariadb:
+    image: mariadb:11.0
+    container_name: dailysync-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=dailysync
+      - TZ=Asia/Shanghai
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./mariadb-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - dailysync-net
+
+  dailysync:
+    build: .
+    container_name: dailysync-web
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      - TZ=Asia/Shanghai
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USER=dailysync
+      - DB_PASS=dailysync_pass
+      - DB_NAME=dailysync
+      - ENC_KEY=dailysync-secret-key-2024
+    ports:
+      - "9610:9610"
+    volumes:
+      - sync-data:/app/db
+    networks:
+      - dailysync-net
+
+volumes:
+  mariadb-data:
+  sync-data:
+
+networks:
+  dailysync-net:
+    driver: bridge
 ```
 
 ## 🔄 定时同步
