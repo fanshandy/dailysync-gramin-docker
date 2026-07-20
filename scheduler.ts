@@ -239,9 +239,8 @@ app.post('/api/login', async (req, res) => {
 
 // API: Register
 app.post('/api/register', async (req, res) => {
-  const { username, password, inviteCode } = req.body;
-  if (!username || !password || !inviteCode) return res.status(400).json({ error: '请填写所有字段' });
-  if (inviteCode !== INVITE_CODE) return res.status(403).json({ error: '邀请码错误' });
+  const { username, password } = req.body;
+  if (!username || !password) return res.status(400).json({ error: '请填写所有字段' });
   if (username.length < 2 || password.length < 4) return res.status(400).json({ error: '用户名至少2位，密码至少4位' });
 
   try {
@@ -412,7 +411,6 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;bac
   <div id="register-tab" class="tab-content">
     <div class="form-group"><label>用户名</label><input id="reg-user" type="text" placeholder="至少2个字符"></div>
     <div class="form-group"><label>密码</label><input id="reg-pass" type="password" placeholder="至少4个字符"></div>
-    <div class="form-group"><label>邀请码</label><input id="reg-code" type="text" placeholder="请输入邀请码"></div>
     <div id="reg-error" class="error"></div>
     <button class="btn btn-success" onclick="doRegister()">注 册</button>
   </div>
@@ -421,7 +419,7 @@ body{min-height:100vh;display:flex;align-items:center;justify-content:center;bac
 function showToast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';setTimeout(function(){t.className='toast'},3000)}
 function switchTab(t){document.querySelectorAll('.tab').forEach(function(e){e.classList.remove('active')});document.querySelectorAll('.tab-content').forEach(function(e){e.classList.remove('active')});if(t==='login'){document.querySelectorAll('.tab')[0].classList.add('active');document.getElementById('login-tab').classList.add('active')}else{document.querySelectorAll('.tab')[1].classList.add('active');document.getElementById('register-tab').classList.add('active')}}
 function doLogin(){var u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pass').value.trim(),e=document.getElementById('login-error');if(!u||!p){e.textContent='请填写完整';e.style.display='block';return}e.style.display='none';fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})}).then(function(r){return r.json()}).then(function(d){if(d.error){e.textContent=d.error;e.style.display='block'}else{localStorage.setItem('token',d.token);localStorage.setItem('username',d.username);window.location.href='/dashboard.html'}}).catch(function(){e.textContent='网络错误';e.style.display='block'})}
-function doRegister(){var u=document.getElementById('reg-user').value.trim(),p=document.getElementById('reg-pass').value.trim(),c=document.getElementById('reg-code').value.trim(),e=document.getElementById('reg-error');if(!u||!p||!c){e.textContent='请填写所有字段';e.style.display='block';return}e.style.display='none';fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p,inviteCode:c})}).then(function(r){return r.json()}).then(function(d){if(d.error){e.textContent=d.error;e.style.display='block'}else{showToast('注册成功，请登录','success');switchTab('login')}}).catch(function(){e.textContent='网络错误';e.style.display='block'})}
+function doRegister(){var u=document.getElementById('reg-user').value.trim(),p=document.getElementById('reg-pass').value.trim(),e=document.getElementById('reg-error');if(!u||!p){e.textContent='请填写所有字段';e.style.display='block';return}e.style.display='none';fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})}).then(function(r){return r.json()}).then(function(d){if(d.error){e.textContent=d.error;e.style.display='block'}else{showToast('注册成功，请登录','success');switchTab('login')}}).catch(function(){e.textContent='网络错误';e.style.display='block'})}
 </script>
 </body>
 </html>`;
