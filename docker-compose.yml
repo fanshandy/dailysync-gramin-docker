@@ -4,14 +4,14 @@ services:
     container_name: dailysync-db
     restart: unless-stopped
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=dailysync
       - TZ=Asia/Shanghai
     volumes:
       - mariadb-data:/var/lib/mysql
       - ./mariadb-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -31,9 +31,9 @@ services:
       - DB_HOST=mariadb
       - DB_PORT=3306
       - DB_USER=dailysync
-      - DB_PASS=dailysync_pass
+      - DB_PASS=${DB_PASS}
       - DB_NAME=dailysync
-      - ENC_KEY=dailysync-secret-key-2024
+      - ENC_KEY=${ENC_KEY}
     ports:
       - "9610:9610"
     volumes:
