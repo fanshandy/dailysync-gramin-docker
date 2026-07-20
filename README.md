@@ -6,9 +6,8 @@
 
 本项目基于 [gooin/dailysync-rev](https://github.com/gooin/dailysync-rev)（GPL-3.0 开源协议）进行二次整合，主要改动：
 
-- **集成 MariaDB**：数据库内置在 Docker Compose 中，无需外部数据库
-- **Web 管理面板**：基于 Express 的网页界面，支持多用户登录、邀请码注册、手动/定时同步
-- **连接池优化**：MySQL 连接池替代单连接，避免长时间空闲断开
+- **Web 管理面板**：基于 Express 的网页界面，支持多用户登录、手动/定时同步
+- **连接池优化**：避免长时间空闲断开
 - **用户数据隔离**：每个用户只能看到自己的佳明账号配置和同步记录
 - **一键部署**：`docker compose up -d` 即可启动
 
@@ -30,8 +29,6 @@ cd dailysync-gramin-docker
 ```bash
 docker compose up -d
 ```
-
-首次启动会自动创建数据库和表结构，等待约 30 秒让 MariaDB 初始化完成。
 
 ### 3. 访问面板
 
@@ -77,7 +74,7 @@ ports:
 
 ```
 dailysync-docker/
-├── docker-compose.yml        # 服务编排（MariaDB + Web）
+├── docker-compose.yml        # 服务编排
 ├── Dockerfile                # Web 服务镜像构建
 ├── scheduler.ts              # 主服务代码（Web UI + API + 同步逻辑）
 ├── package.json              # Node.js 依赖
