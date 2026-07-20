@@ -21,8 +21,8 @@
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/fanzhenyi1/dailysync-docker.git
-cd dailysync-docker
+git clone https://github.com/fanshandy/dailysync-gramin-docker.git
+cd dailysync-gramin-docker
 ```
 
 ### 2. 启动服务
