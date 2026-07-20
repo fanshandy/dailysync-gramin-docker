@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:11.0
+    container_name: dailysync-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=dailysync
+      - TZ=Asia/Shanghai
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./mariadb-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - dailysync-net
+
+  dailysync:
+    build: .
+    container_name: dailysync-web
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      - TZ=Asia/Shanghai
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - DB_USER=dailysync
+      - DB_PASS=dailysync_pass
+      - DB_NAME=dailysync
+      - ENC_KEY=dailysync-secret-key-2024
+    ports:
+      - "9610:9610"
+    volumes:
+      - sync-data:/app/db
+    networks:
+      - dailysync-net
+
+volumes:
+  mariadb-data:
+  sync-data:
+
+networks:
+  dailysync-net:
+    driver: bridge
