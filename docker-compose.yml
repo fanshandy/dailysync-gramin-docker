@@ -6,10 +6,11 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=dailysync
+      - MYSQL_USER=dailysync
+      - MYSQL_PASSWORD=${DB_PASS}
       - TZ=Asia/Shanghai
     volumes:
       - mariadb-data:/var/lib/mysql
-      - ./mariadb-init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s

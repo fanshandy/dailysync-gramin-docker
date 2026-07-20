@@ -13,8 +13,8 @@ const ENC_KEY = process.env.ENC_KEY || 'dailysync-secret-key-2024';
 // DB config
 const DB_HOST = process.env.DB_HOST || 'mariadb';
 const DB_PORT = parseInt(process.env.DB_PORT || '3306');
-const DB_USER = process.env.DB_USER || 'root';
-const DB_PASS = process.env.DB_PASS || 'FZY123?fzy';
+const DB_USER = process.env.DB_USER || 'dailysync';
+const DB_PASS = process.env.DB_PASS || 'changeme';
 const DB_NAME = process.env.DB_NAME || 'dailysync';
 
 // Encrypt/decrypt helpers
